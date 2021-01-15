@@ -1,0 +1,15 @@
+<component name="libraryTable">
+  <library name="Gradle: com.rudderstack.android.sdk:core:1.0.1@aar">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/e824b9621ed50a3a7258002504dbac1b/jetified-core-1.0.1/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/e824b9621ed50a3a7258002504dbac1b/jetified-core-1.0.1/res" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/e824b9621ed50a3a7258002504dbac1b/jetified-core-1.0.1/AndroidManifest.xml" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.rudderstack.android.sdk/core/1.0.1/79a844f46438441efc9bab6e44e8330078e28f7f/core-1.0.1-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.rudderstack.android.sdk/core/1.0.1/3b75eb780ca8d9626182a90cf222114291fe2635/core-1.0.1-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

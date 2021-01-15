@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/rudder-integration-appcenter-android.iml" filepath="$PROJECT_DIR$/.idea/modules/rudder-integration-appcenter-android.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/appcenter/rudder-integration-appcenter-android.appcenter.iml" filepath="$PROJECT_DIR$/.idea/modules/appcenter/rudder-integration-appcenter-android.appcenter.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/sample-kotlin/rudder-integration-appcenter-android.sample-kotlin.iml" filepath="$PROJECT_DIR$/.idea/modules/sample-kotlin/rudder-integration-appcenter-android.sample-kotlin.iml" />
+    </modules>
+  </component>
+</project>
