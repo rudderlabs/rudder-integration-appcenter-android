@@ -16,7 +16,6 @@ import com.rudderstack.android.sdk.core.RudderLogger;
 import com.rudderstack.android.sdk.core.RudderMessage;
 
 
-
 import java.util.Map;
 import java.util.Set;
 
@@ -70,12 +69,11 @@ public class AppcenterIntegrationFactory extends RudderIntegration<Analytics> {
             normalEvents = Utils.getEventSet(this.destinationConfig.eventPriorityMap, "Normal");
         }
 
-        if (!TextUtils.isEmpty(this.destinationConfig.appSecret)) {
-            if (!TextUtils.isEmpty(this.destinationConfig.transmissionLevel)) {
-                analytics.setTransmissionInterval(Integer.valueOf(this.destinationConfig.transmissionLevel) * 60);
-            }
-            AppCenter.start(RudderClient.getApplication(), this.destinationConfig.appSecret, Analytics.class);
+        if (!TextUtils.isEmpty(this.destinationConfig.transmissionLevel)) {
+            analytics.setTransmissionInterval(Integer.valueOf(this.destinationConfig.transmissionLevel) * 60);
         }
+        AppCenter.start(RudderClient.getApplication(), this.destinationConfig.appSecret, Analytics.class);
+
     }
 
     private void processRudderEvent(RudderMessage element) throws Exception {
@@ -107,7 +105,7 @@ public class AppcenterIntegrationFactory extends RudderIntegration<Analytics> {
                         analytics.trackEvent("Viewed a screen", screenProperties);
                         break;
                     }
-                    analytics.trackEvent("Viewed a Screen");
+                    analytics.trackEvent("Viewed a screen");
                     break;
                 default:
                     RudderLogger.logWarn("AppcenterIntegrationFactory: MessageType is not specified");

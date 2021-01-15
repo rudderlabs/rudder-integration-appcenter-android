@@ -6,5 +6,5 @@ import java.util.Map;
 public class AppcenterDestinationConfig {
     String appSecret;
     String transmissionLevel;
-    List<Map<String,String>> eventPriorityMap;
+    List<Map<String, String>> eventPriorityMap;
 }

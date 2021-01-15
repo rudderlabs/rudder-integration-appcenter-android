@@ -27,7 +27,7 @@ public class Utils {
 
     static Map<String, String> filterEventProperties(Map<String, Object> eventProperties) {
         Map<String, String> filteredEventProperties = new HashMap<>();
-        if(eventProperties!=null) {
+        if (eventProperties != null) {
             for (Map.Entry<String, Object> entry : eventProperties.entrySet()) {
                 if (entry.getValue() instanceof String) {
                     filteredEventProperties.put(entry.getKey(), entry.getValue().toString());
