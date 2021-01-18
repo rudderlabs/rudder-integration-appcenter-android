@@ -58,11 +58,6 @@ public class AppcenterIntegrationFactory extends RudderIntegration<Analytics> {
         Gson gson = new Gson();
         this.destinationConfig = gson.fromJson(gson.toJson(config), AppcenterDestinationConfig.class);
 
-        if (TextUtils.isEmpty(this.destinationConfig.appSecret)) {
-            RudderLogger.logError("Invalid app secret. Aborting Appcenter initialization.");
-            return;
-        }
-
         // process event priorities
         if (this.destinationConfig.eventPriorityMap != null) {
             criticalEvents = Utils.getEventSet(this.destinationConfig.eventPriorityMap, "Critical");
