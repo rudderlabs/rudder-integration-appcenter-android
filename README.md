@@ -11,26 +11,37 @@ Released under [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0)
 ## Getting Started with Appcenter Integration of Android SDK
 1. Add [Appcenter](https://appcenter.ms) as a destination in the [Dashboard](https://app.rudderstack.com/) and define `apiKey`.
 
-2. Add these lines to your ```app/build.gradle```
-```
-repositories {
-    maven { url "https://dl.bintray.com/rudderstack/rudderstack" }
-}
-```
-3. Add the dependency under ```dependencies```
-```
+2. Add the following `dependencies` to your `app/build.gradle` file as shown:
 
-// gson
+```text
+implementation 'com.rudderstack.android.sdk:core:1.+'
+implementation 'com.rudderstack.android.integration:appcenter:1.0.0'
 implementation 'com.google.code.gson:gson:2.8.6'
 ```
 
-## Initialize ```RudderClient```
+3. also add the App center `analytics` depedencies to your `app/build.gradle` as shown below:
+
+```text
+def appCenterSdkVersion = '4.1.0'
+implementation "com.microsoft.appcenter:appcenter-analytics:${appCenterSdkVersion}"
 ```
-val rudderClient: RudderClient = RudderClient.getInstance(
+
+4. Make sure that the `minSdkVersion` in your `app/build.gradle` is atleast `21`.
+
+```text
+defaultConfig {
+        minSdkVersion 21
+}
+```
+
+5. Finally change the initialization of your `RudderClient` in your `Application` class.
+
+```text
+val rudderClient = RudderClient.getInstance(
     this,
-    <WRITE_KEY>,
+    <YOUR_WRITE_KEY>,
     RudderConfig.Builder()
-        .withDataPlaneUrl(<DATA_PLANE_URL>)
+        .withDataPlaneUrl(<YOUR_DATA_PLANE_URL>)
         .withFactory(AppcenterIntegrationFactory.FACTORY)
         .build()
 )
