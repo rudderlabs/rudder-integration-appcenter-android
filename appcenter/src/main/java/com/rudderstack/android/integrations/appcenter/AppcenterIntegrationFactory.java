@@ -15,7 +15,6 @@ import com.rudderstack.android.sdk.core.RudderIntegration;
 import com.rudderstack.android.sdk.core.RudderLogger;
 import com.rudderstack.android.sdk.core.RudderMessage;
 
-
 import java.util.Map;
 import java.util.Set;
 
@@ -59,6 +58,7 @@ public class AppcenterIntegrationFactory extends RudderIntegration<Analytics> {
         this.destinationConfig = gson.fromJson(gson.toJson(config), AppcenterDestinationConfig.class);
 
         // process event priorities
+        // event priority map is never null as per our control plane definition hence both the sets criticalEvents and normalEvents will never be null
         if (this.destinationConfig.eventPriorityMap != null) {
             criticalEvents = Utils.getEventSet(this.destinationConfig.eventPriorityMap, "Critical");
             normalEvents = Utils.getEventSet(this.destinationConfig.eventPriorityMap, "Normal");
@@ -96,11 +96,10 @@ public class AppcenterIntegrationFactory extends RudderIntegration<Analytics> {
                     break;
                 case MessageType.SCREEN:
                     Map<String, String> screenProperties = Utils.filterEventProperties(element.getProperties());
+                    String screenName = screenProperties.get("name");
                     if (screenProperties != null) {
-                        analytics.trackEvent("Viewed a screen", screenProperties);
-                        break;
+                        analytics.trackEvent(String.format("Viewed %s screen", screenName), screenProperties);
                     }
-                    analytics.trackEvent("Viewed a screen");
                     break;
                 default:
                     RudderLogger.logWarn("AppcenterIntegrationFactory: MessageType is not specified");
