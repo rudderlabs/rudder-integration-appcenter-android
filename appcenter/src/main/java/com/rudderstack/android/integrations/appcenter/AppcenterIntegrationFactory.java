@@ -32,7 +32,7 @@ public class AppcenterIntegrationFactory extends RudderIntegration<Analytics> {
     public static Factory FACTORY = new Factory() {
         @Override
         public RudderIntegration<?> create(Object settings, RudderClient client, RudderConfig rudderConfig) {
-            return new AppcenterIntegrationFactory(settings, rudderConfig);
+            return new AppcenterIntegrationFactory(settings);
         }
 
         @Override
@@ -41,7 +41,7 @@ public class AppcenterIntegrationFactory extends RudderIntegration<Analytics> {
         }
     };
 
-    private AppcenterIntegrationFactory(Object config, RudderConfig rudderConfig) {
+    private AppcenterIntegrationFactory(Object config) {
 
         if (RudderClient.getApplication() == null) {
             RudderLogger.logError("Application is null. Aborting Appcenter initialization.");
@@ -71,7 +71,7 @@ public class AppcenterIntegrationFactory extends RudderIntegration<Analytics> {
 
     }
 
-    private void processRudderEvent(RudderMessage element) throws Exception {
+    private void processRudderEvent(RudderMessage element) {
         String type = element.getType();
         if (type != null) {
             switch (type) {

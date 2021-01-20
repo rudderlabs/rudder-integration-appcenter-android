@@ -10,7 +10,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val screenProperties = RudderProperty();
+        val screenProperties = RudderProperty()
         screenProperties.put("path", "/testing")
         screenProperties.put("device", "android")
         MainApplication.rudderClient.screen("Shop testing")
