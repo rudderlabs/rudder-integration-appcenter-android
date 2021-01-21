@@ -12,31 +12,24 @@ Released under [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0)
 1. Add [Appcenter](https://appcenter.ms) as a destination in the [Dashboard](https://app.rudderstack.com/) and define `apiKey`.
 
 2. Add the following `dependencies` to your `app/build.gradle` file as shown:
-
-```text
+```groovy
 implementation 'com.rudderstack.android.sdk:core:1.+'
 implementation 'com.rudderstack.android.integration:appcenter:1.0.0'
 implementation 'com.google.code.gson:gson:2.8.6'
+
+// Appcenter dependency
+implementation "com.microsoft.appcenter:appcenter-analytics:4.1.0"
 ```
 
-3. also add the App center `analytics` depedencies to your `app/build.gradle` as shown below:
-
-```text
-def appCenterSdkVersion = '4.1.0'
-implementation "com.microsoft.appcenter:appcenter-analytics:${appCenterSdkVersion}"
-```
-
-4. Make sure that the `minSdkVersion` in your `app/build.gradle` is atleast `21`.
-
-```text
+3. Make sure that the `minSdkVersion` in your `app/build.gradle` is at least `21`.
+```groovy
 defaultConfig {
         minSdkVersion 21
 }
 ```
 
-5. Finally change the initialization of your `RudderClient` in your `Application` class.
-
-```text
+4. Finally change the initialization of your `RudderClient` in your `Application` class.
+```groovy
 val rudderClient = RudderClient.getInstance(
     this,
     <YOUR_WRITE_KEY>,

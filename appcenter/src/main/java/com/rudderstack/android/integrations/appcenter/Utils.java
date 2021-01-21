@@ -5,29 +5,32 @@ import androidx.annotation.Nullable;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.microsoft.appcenter.Flags;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class Utils {
-
     // returns the eventMap of the given priority from the eventsArray supplied by the destination config
+    @NonNull
     static Map<String, Integer> getEventMap(@NonNull JsonArray eventsArray) {
         Map<String, Integer> eventMap = new HashMap<>();
         for (int i = 0; i < eventsArray.size(); i++) {
             JsonObject eventObject = (JsonObject) eventsArray.get(i);
             String eventName = eventObject.get("from").getAsString();
             String priority = eventObject.get("to").getAsString();
-            if (priority.equals("Normal")) {
-                eventMap.put(eventName, 0x01);
-                continue;
+            if (priority.equalsIgnoreCase("normal")) {
+                eventMap.put(eventName, Flags.NORMAL);
+            } else {
+                // Consider it CRITICAL by default
+                eventMap.put(eventName, Flags.CRITICAL);
             }
-            eventMap.put(eventName, 0x02);
         }
         return eventMap;
     }
 
     // used to remove key-value pairs whose value is not a string type from the eventProperties map
+    @Nullable
     static Map<String, String> filterEventProperties(@Nullable Map<String, Object> eventProperties) {
         if (eventProperties == null) {
             return null;
@@ -40,5 +43,4 @@ public class Utils {
         }
         return filteredEventProperties;
     }
-
 }

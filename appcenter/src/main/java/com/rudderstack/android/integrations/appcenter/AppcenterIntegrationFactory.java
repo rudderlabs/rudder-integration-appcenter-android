@@ -26,11 +26,8 @@ import com.google.gson.JsonArray;
 import java.lang.reflect.Type;
 import java.util.Map;
 
-
 public class AppcenterIntegrationFactory extends RudderIntegration<Analytics> {
-
     private static final String APPCENTER_KEY = "AppCenter";
-
     private AppcenterDestinationConfig destinationConfig;
 
     public static Factory FACTORY = new Factory() {
@@ -46,7 +43,6 @@ public class AppcenterIntegrationFactory extends RudderIntegration<Analytics> {
     };
 
     private AppcenterIntegrationFactory(@NonNull Object config) {
-
         if (RudderClient.getApplication() == null) {
             RudderLogger.logError("Application is null. Aborting Appcenter initialization.");
             return;
@@ -54,29 +50,42 @@ public class AppcenterIntegrationFactory extends RudderIntegration<Analytics> {
 
         // deserialize the destination config json into AppCenterDestinationConfig object
         GsonBuilder gsonBuilder = new GsonBuilder();
-        JsonDeserializer<AppcenterDestinationConfig> deserializer = new JsonDeserializer<AppcenterDestinationConfig>() {
-            @Override
-            public AppcenterDestinationConfig deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-                JsonObject jsonObject = json.getAsJsonObject();
-                JsonArray eventPriorityMap = (JsonArray) (jsonObject.get("eventPriorityMap"));
-                Map<String, Integer> eventMap = Utils.getEventMap(eventPriorityMap);
+        JsonDeserializer<AppcenterDestinationConfig> deserializer =
+                new JsonDeserializer<AppcenterDestinationConfig>() {
+                    @Override
+                    public AppcenterDestinationConfig deserialize(
+                            JsonElement json,
+                            Type typeOfT,
+                            JsonDeserializationContext context
+                    ) throws JsonParseException {
+                        JsonObject jsonObject = json.getAsJsonObject();
+                        JsonArray eventPriorityMap = (JsonArray) (jsonObject.get("eventPriorityMap"));
+                        Map<String, Integer> eventMap = Utils.getEventMap(eventPriorityMap);
 
-                return new AppcenterDestinationConfig(
-                        jsonObject.get("appSecret").getAsString(),
-                        jsonObject.get("transmissionLevel").getAsString(),
-                        eventMap
-                );
-            }
-        };
+                        return new AppcenterDestinationConfig(
+                                jsonObject.get("appSecret").getAsString(),
+                                jsonObject.get("transmissionLevel").getAsString(),
+                                eventMap
+                        );
+                    }
+                };
         gsonBuilder.registerTypeAdapter(AppcenterDestinationConfig.class, deserializer);
         Gson customGson = gsonBuilder.create();
         this.destinationConfig = customGson.fromJson(customGson.toJson(config), AppcenterDestinationConfig.class);
 
         // initializing appcenter sdk
-        if (!TextUtils.isEmpty(this.destinationConfig.transmissionLevel))
-            Analytics.setTransmissionInterval(Integer.parseInt(this.destinationConfig.transmissionLevel) * 60);
-        AppCenter.start(RudderClient.getApplication(), this.destinationConfig.appSecret, Analytics.class);
+        if (!TextUtils.isEmpty(this.destinationConfig.transmissionLevel)) {
+            Analytics.setTransmissionInterval(
+                    Integer.parseInt(this.destinationConfig.transmissionLevel) * 60
+            );
+        }
 
+        // Everything looks good. Initiate the SDK
+        AppCenter.start(
+                RudderClient.getApplication(),
+                this.destinationConfig.appSecret,
+                Analytics.class
+        );
     }
 
     private void processRudderEvent(RudderMessage element) {
@@ -86,24 +95,32 @@ public class AppcenterIntegrationFactory extends RudderIntegration<Analytics> {
                 case MessageType.TRACK:
                     String eventName = element.getEventName();
                     if (eventName != null) {
-                        Map<String, String> eventProperties = Utils.filterEventProperties(element.getProperties());
+                        Map<String, String> eventProperties = Utils.filterEventProperties(
+                                element.getProperties()
+                        );
                         Integer critical = this.destinationConfig.eventMap.get(eventName);
                         if (critical != null) {
+                            // criticality for this event is mapped in the dashboard
+                            // track with mentioned criticality
                             Analytics.trackEvent(eventName, eventProperties, critical);
                             break;
                         }
+                        // track event with DEFAULT criticality
                         Analytics.trackEvent(eventName, eventProperties);
                     }
                     break;
                 case MessageType.SCREEN:
-                    Map<String, String> screenProperties = Utils.filterEventProperties(element.getProperties());
-                    String screenName = screenProperties.get("name");
+                    Map<String, String> screenProperties =
+                            Utils.filterEventProperties(element.getProperties());
                     if (screenProperties != null) {
-                        Analytics.trackEvent(String.format("Viewed %s screen", screenName), screenProperties);
+                        Analytics.trackEvent(
+                                String.format("Viewed %s screen", screenProperties.get("name")),
+                                screenProperties
+                        );
                     }
                     break;
                 default:
-                    RudderLogger.logWarn("AppcenterIntegrationFactory: MessageType is not specified");
+                    RudderLogger.logWarn("MessageType is not specified or supported");
                     break;
             }
         }
@@ -111,7 +128,7 @@ public class AppcenterIntegrationFactory extends RudderIntegration<Analytics> {
 
     @Override
     public void reset() {
-        RudderLogger.logDebug("Appcenter does not support the rest api");
+        RudderLogger.logDebug("Appcenter does not support the reset");
     }
 
     @Override
@@ -129,5 +146,4 @@ public class AppcenterIntegrationFactory extends RudderIntegration<Analytics> {
     public Analytics getUnderlyingInstance() {
         return Analytics.getInstance();
     }
-
 }
