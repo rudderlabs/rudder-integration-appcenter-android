@@ -2,11 +2,17 @@ package com.rudderstack.android.integrations.appcenter;
 
 import android.text.TextUtils;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
 import com.microsoft.appcenter.AppCenter;
-import com.microsoft.appcenter.Flags;
 import com.microsoft.appcenter.analytics.Analytics;
 import com.rudderstack.android.sdk.core.MessageType;
 import com.rudderstack.android.sdk.core.RudderClient;
@@ -15,19 +21,17 @@ import com.rudderstack.android.sdk.core.RudderIntegration;
 import com.rudderstack.android.sdk.core.RudderLogger;
 import com.rudderstack.android.sdk.core.RudderMessage;
 
+import com.google.gson.JsonArray;
+
+import java.lang.reflect.Type;
 import java.util.Map;
-import java.util.Set;
 
 
 public class AppcenterIntegrationFactory extends RudderIntegration<Analytics> {
 
     private static final String APPCENTER_KEY = "AppCenter";
 
-    private Analytics analytics;
     private AppcenterDestinationConfig destinationConfig;
-
-    private Set<String> criticalEvents;
-    private Set<String> normalEvents;
 
     public static Factory FACTORY = new Factory() {
         @Override
@@ -41,32 +45,36 @@ public class AppcenterIntegrationFactory extends RudderIntegration<Analytics> {
         }
     };
 
-    private AppcenterIntegrationFactory(Object config) {
+    private AppcenterIntegrationFactory(@NonNull Object config) {
 
         if (RudderClient.getApplication() == null) {
             RudderLogger.logError("Application is null. Aborting Appcenter initialization.");
             return;
         }
 
-        if (config == null) {
-            RudderLogger.logError("Invalid config. Aborting Appcenter initialization.");
-            return;
-        }
+        // deserialize the destination config json into AppCenterDestinationConfig object
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        JsonDeserializer<AppcenterDestinationConfig> deserializer = new JsonDeserializer<AppcenterDestinationConfig>() {
+            @Override
+            public AppcenterDestinationConfig deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+                JsonObject jsonObject = json.getAsJsonObject();
+                JsonArray eventPriorityMap = (JsonArray) (jsonObject.get("eventPriorityMap"));
+                Map<String, Integer> eventMap = Utils.getEventMap(eventPriorityMap);
 
-        // parse destination config
-        Gson gson = new Gson();
-        this.destinationConfig = gson.fromJson(gson.toJson(config), AppcenterDestinationConfig.class);
+                return new AppcenterDestinationConfig(
+                        jsonObject.get("appSecret").getAsString(),
+                        jsonObject.get("transmissionLevel").getAsString(),
+                        eventMap
+                );
+            }
+        };
+        gsonBuilder.registerTypeAdapter(AppcenterDestinationConfig.class, deserializer);
+        Gson customGson = gsonBuilder.create();
+        this.destinationConfig = customGson.fromJson(customGson.toJson(config), AppcenterDestinationConfig.class);
 
-        // process event priorities
-        // event priority map is never null as per our control plane definition hence both the sets criticalEvents and normalEvents will never be null
-        if (this.destinationConfig.eventPriorityMap != null) {
-            criticalEvents = Utils.getEventSet(this.destinationConfig.eventPriorityMap, "Critical");
-            normalEvents = Utils.getEventSet(this.destinationConfig.eventPriorityMap, "Normal");
-        }
-
-        if (!TextUtils.isEmpty(this.destinationConfig.transmissionLevel)) {
-            analytics.setTransmissionInterval(Integer.valueOf(this.destinationConfig.transmissionLevel) * 60);
-        }
+        // initializing appcenter sdk
+        if (!TextUtils.isEmpty(this.destinationConfig.transmissionLevel))
+            Analytics.setTransmissionInterval(Integer.parseInt(this.destinationConfig.transmissionLevel) * 60);
         AppCenter.start(RudderClient.getApplication(), this.destinationConfig.appSecret, Analytics.class);
 
     }
@@ -79,26 +87,19 @@ public class AppcenterIntegrationFactory extends RudderIntegration<Analytics> {
                     String eventName = element.getEventName();
                     if (eventName != null) {
                         Map<String, String> eventProperties = Utils.filterEventProperties(element.getProperties());
-                        if (eventProperties == null) {
-                            analytics.trackEvent(eventName);
+                        Integer critical = this.destinationConfig.eventMap.get(eventName);
+                        if (critical != null) {
+                            Analytics.trackEvent(eventName, eventProperties, critical);
                             break;
                         }
-                        if (criticalEvents.contains(eventName)) {
-                            analytics.trackEvent(eventName, eventProperties, Flags.CRITICAL);
-                            break;
-                        }
-                        if (normalEvents.contains(eventName)) {
-                            analytics.trackEvent(eventName, eventProperties, Flags.NORMAL);
-                            break;
-                        }
-                        analytics.trackEvent(eventName, eventProperties);
+                        Analytics.trackEvent(eventName, eventProperties);
                     }
                     break;
                 case MessageType.SCREEN:
                     Map<String, String> screenProperties = Utils.filterEventProperties(element.getProperties());
                     String screenName = screenProperties.get("name");
                     if (screenProperties != null) {
-                        analytics.trackEvent(String.format("Viewed %s screen", screenName), screenProperties);
+                        Analytics.trackEvent(String.format("Viewed %s screen", screenName), screenProperties);
                     }
                     break;
                 default:
@@ -109,13 +110,8 @@ public class AppcenterIntegrationFactory extends RudderIntegration<Analytics> {
     }
 
     @Override
-    public void flush() {
-        RudderLogger.logDebug("Inside flush");
-    }
-
-    @Override
     public void reset() {
-        RudderLogger.logDebug("Inside reset");
+        RudderLogger.logDebug("Appcenter does not support the rest api");
     }
 
     @Override
@@ -131,7 +127,7 @@ public class AppcenterIntegrationFactory extends RudderIntegration<Analytics> {
 
     @Override
     public Analytics getUnderlyingInstance() {
-        return this.analytics;
+        return Analytics.getInstance();
     }
 
 }

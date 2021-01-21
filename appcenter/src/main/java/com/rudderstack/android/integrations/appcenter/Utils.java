@@ -1,39 +1,41 @@
 package com.rudderstack.android.integrations.appcenter;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 public class Utils {
 
-    // returns the eventset of the given priority from the eventsList supplied by the destination config
-    static Set<String> getEventSet(@Nullable List<Map<String, String>> eventsList, String priority) {
-        Set<String> eventSet = new HashSet<>();
-        if (eventsList != null) {
-            for (int i = 0; i < eventsList.size(); i++) {
-                Map<String, String> eventsMap = eventsList.get(i);
-                String eventName = eventsMap.get("from");
-                String priorityFromMap = eventsMap.get("to");
-                if (priorityFromMap.equals(priority)) {
-                    eventSet.add(eventName);
-                }
+    // returns the eventMap of the given priority from the eventsArray supplied by the destination config
+    static Map<String, Integer> getEventMap(@NonNull JsonArray eventsArray) {
+        Map<String, Integer> eventMap = new HashMap<>();
+        for (int i = 0; i < eventsArray.size(); i++) {
+            JsonObject eventObject = (JsonObject) eventsArray.get(i);
+            String eventName = eventObject.get("from").getAsString();
+            String priority = eventObject.get("to").getAsString();
+            if (priority.equals("Normal")) {
+                eventMap.put(eventName, 0x01);
+                continue;
             }
+            eventMap.put(eventName, 0x02);
         }
-        return eventSet;
+        return eventMap;
     }
 
     // used to remove key-value pairs whose value is not a string type from the eventProperties map
-    static Map<String, String> filterEventProperties(Map<String, Object> eventProperties) {
+    static Map<String, String> filterEventProperties(@Nullable Map<String, Object> eventProperties) {
+        if (eventProperties == null) {
+            return null;
+        }
         Map<String, String> filteredEventProperties = new HashMap<>();
-        if (eventProperties != null) {
-            for (Map.Entry<String, Object> entry : eventProperties.entrySet()) {
-                if (entry.getValue() instanceof String || entry.getValue() instanceof Number) {
-                    filteredEventProperties.put(entry.getKey(), entry.getValue().toString());
-                }
+        for (Map.Entry<String, Object> entry : eventProperties.entrySet()) {
+            if (entry.getValue() instanceof String || entry.getValue() instanceof Number) {
+                filteredEventProperties.put(entry.getKey(), entry.getValue().toString());
             }
         }
         return filteredEventProperties;
