@@ -8,7 +8,7 @@ import com.rudderstack.android.sdk.core.RudderLogger
 
 class MainApplication : Application() {
     companion object {
-        private const val WRITE_KEY = "1ZIkdsNVvxrUC7bRGOorIxmJVEH"
+        private const val WRITE_KEY = "1n1DYquRmdyeNJkPisQl86o7531"
         private const val DATA_PLANE_URL = "http://localhost:8080"
         private const val CONTROL_PLANE_URL = "http://localhost:5000"
         lateinit var rudderClient: RudderClient
