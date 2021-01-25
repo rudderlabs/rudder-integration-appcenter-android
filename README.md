@@ -21,14 +21,23 @@ implementation 'com.google.code.gson:gson:2.8.6'
 implementation "com.microsoft.appcenter:appcenter-analytics:4.1.0"
 ```
 
-3. Make sure that the `minSdkVersion` in your `app/build.gradle` is at least `21`.
+3. Also add the below `repositories` tag in your `app/build.gradle` as shown:
+```groovy
+repositories {
+    maven {
+        url  "https://dl.bintray.com/rudderstack/rudderstack"
+    }
+}
+```
+
+4. Make sure that the `minSdkVersion` in your `app/build.gradle` is at least `21`.
 ```groovy
 defaultConfig {
         minSdkVersion 21
 }
 ```
 
-4. Finally change the initialization of your `RudderClient` in your `Application` class.
+5. Finally change the initialization of your `RudderClient` in your `Application` class.
 ```groovy
 val rudderClient = RudderClient.getInstance(
     this,
