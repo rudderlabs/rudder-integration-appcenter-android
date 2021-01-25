@@ -27,7 +27,7 @@ import java.lang.reflect.Type;
 import java.util.Map;
 
 public class AppcenterIntegrationFactory extends RudderIntegration<Analytics> {
-    private static final String APPCENTER_KEY = "AppCenter";
+    private static final String APPCENTER_KEY = "App Center";
     private AppcenterDestinationConfig destinationConfig;
 
     public static Factory FACTORY = new Factory() {

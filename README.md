@@ -14,7 +14,7 @@ Released under [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0)
 2. Add the following `dependencies` to your `app/build.gradle` file as shown:
 ```groovy
 implementation 'com.rudderstack.android.sdk:core:1.+'
-implementation 'com.rudderstack.android.integration:appcenter:1.0.0'
+implementation 'com.rudderstack.android.integration:appcenter:1.0.1'
 implementation 'com.google.code.gson:gson:2.8.6'
 
 // Appcenter dependency
