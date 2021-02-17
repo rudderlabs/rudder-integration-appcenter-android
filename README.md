@@ -1,17 +1,15 @@
-# What is Rudder?
+# What is RudderStack?
 
-**Short answer:** 
-Rudder is an open-source Segment alternative written in Go, built for the enterprise.
+[RudderStack](https://rudderstack.com/) is a **customer data pipeline** tool for collecting, routing and processing data from your websites, apps, cloud tools, and data warehouse.
 
-**Long answer:** 
-Rudder is a platform for collecting, storing and routing customer event data to dozens of tools. Rudder is open-source, can run in your cloud environment (AWS, GCP, Azure or even your data-centre) and provides a powerful transformation framework to process your event data on the fly.
+More information on RudderStack can be found [here](https://github.com/rudderlabs/rudder-server).
 
-Released under [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0)
+## Integrating Visual Studio App Center for RudderStack's Android SDK
 
-## Getting Started with Appcenter Integration of Android SDK
-1. Add [Appcenter](https://appcenter.ms) as a destination in the [Dashboard](https://app.rudderstack.com/) and define app secret key.
+1. Add [Appcenter](https://appcenter.ms) as a destination in the [RudderStack dashboard](https://app.rudderstack.com/) and define the app secret key.
 
 2. Add the following `dependencies` to your `app/build.gradle` file as shown:
+
 ```groovy
 implementation 'com.rudderstack.android.sdk:core:1.+'
 implementation 'com.rudderstack.android.integration:appcenter:1.0.1'
@@ -22,6 +20,7 @@ implementation "com.microsoft.appcenter:appcenter-analytics:4.1.0"
 ```
 
 3. Also add the below `repositories` tag in your `app/build.gradle` as shown:
+
 ```groovy
 repositories {
     maven {
@@ -30,14 +29,16 @@ repositories {
 }
 ```
 
-4. Make sure that the `minSdkVersion` in your `app/build.gradle` is at least `21`.
+4. Make sure that the `minSdkVersion` in your `app/build.gradle` is at least `21`:
+
 ```groovy
 defaultConfig {
         minSdkVersion 21
 }
 ```
 
-5. Finally change the initialization of your `RudderClient` in your `Application` class.
+5. Finally change the initialization of your `RudderClient` in your `Application` class:
+
 ```groovy
 val rudderClient = RudderClient.getInstance(
     this,
@@ -50,7 +51,9 @@ val rudderClient = RudderClient.getInstance(
 ```
 
 ## Send Events
-Follow the steps from [Rudder Android SDK](https://github.com/rudderlabs/rudder-sdk-android)
+
+Follow the steps from the [RudderStack Android SDK](https://github.com/rudderlabs/rudder-sdk-android).
 
 ## Contact Us
-If you come across any issues while configuring or using RudderStack, please feel free to [contact us](https://rudderstack.com/contact/) or start a conversation on our [Discord](https://discordapp.com/invite/xNEdEGw) channel. We will be happy to help you.
+
+If you come across any issues while configuring or using this integration, please feel free to start a conversation on our [Slack](https://resources.rudderstack.com/join-rudderstack-slack) channel. We will be happy to help you.
